@@ -1,0 +1,9 @@
+{
+    "name": "cyber-tech-demo",
+    "version": "1.0.0",
+    "description": "Cyberpunk style tech demo",
+    "scripts": {
+      "build": "echo 'No build required'"
+    }
+  }
+  
