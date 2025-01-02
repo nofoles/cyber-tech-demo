@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>未来科技风格界面</title>
+    <style>
+      :root {
+        --primary-color: #00fff2;
+        --secondary-color: #00a8ff;
+        --accent-color: #7d12ff;
+        --bg-color: #ffffff;
+        --text-color: #333333;
+        --particle-color: #333333;
+        --orbit-color: rgba(0, 0, 0, 0.1);
+        --glow-color: rgba(0, 255, 242, 0.5);
+      }
+
+      [data-theme="dark"] {
+        --primary-color: #00fff2;
+        --secondary-color: #7d12ff;
+        --accent-color: #ff006a;
+        --bg-color: #141432;
+        --text-color: #ffffff;
+        --particle-color: #ffffff;
+        --orbit-color: rgba(255, 255, 255, 0.15);
+        --glow-color: rgba(0, 255, 242, 0.15);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg-color);
+        overflow: hidden;
+        font-family: "Arial", sans-serif;
+        transition: all 0.5s ease;
+        color: var(--text-color);
+      }
+
+      .theme-switch {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+
+      .switch-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 25px;
+        background: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: var(--bg-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 20px var(--glow-color);
+      }
+
+      .switch-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px var(--glow-color);
+      }
+
+      .container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        perspective: 1000px;
+      }
+
+      .card {
+        width: 320px;
+        height: 420px;
+        background: linear-gradient(
+          45deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border-radius: 20px;
+        box-shadow: 0 0 30px var(--glow-color);
+        transform-style: preserve-3d;
+        animation: float 6s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 50px var(--glow-color);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          45deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.1) 45%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0.1) 55%,
+          transparent 100%
+        );
+        animation: shine 3s infinite;
+      }
+
+      .content {
+        padding: 30px;
+        color: var(--bg-color);
+        text-align: center;
+        transform: translateZ(60px);
+        position: relative;
+        z-index: 1;
+      }
+
+      .content h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #fff, #f0f0f0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+      }
+
+      .content p {
+        font-size: 1.2em;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .orbital-system {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .orbit {
+        position: absolute;
+        border: 2px solid var(--orbit-color);
+        border-radius: 50%;
+        animation: rotate 20s linear infinite;
+        box-shadow: 0 0 20px var(--glow-color);
+      }
+
+      .orbit:nth-child(1) {
+        width: 400px;
+        height: 400px;
+        top: calc(50% - 200px);
+        left: calc(50% - 200px);
+      }
+
+      .orbit:nth-child(2) {
+        width: 600px;
+        height: 600px;
+        top: calc(50% - 300px);
+        left: calc(50% - 300px);
+        animation-direction: reverse;
+        border-style: dashed;
+      }
+
+      .orbit:nth-child(3) {
+        width: 800px;
+        height: 800px;
+        top: calc(50% - 400px);
+        left: calc(50% - 400px);
+        border-style: dotted;
+      }
+
+      .planet {
+        position: absolute;
+        background: var(--particle-color);
+        border-radius: 50%;
+        transform-origin: center;
+        box-shadow: 0 0 10px var(--glow-color);
+      }
+
+      .cursor-effect {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s;
+        z-index: 9999;
+      }
+
+      .cursor-trail {
+        position: fixed;
+        width: 6px;
+        height: 6px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        opacity: 0.5;
+        transition: opacity 0.5s ease;
+      }
+
+      .cursor-glow {
+        position: fixed;
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(
+          circle,
+          var(--glow-color) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        opacity: 0.3;
+      }
+
+      .ripple {
+        position: fixed;
+        border-radius: 50%;
+        border: 2px solid var(--primary-color);
+        animation: rippleEffect 1s linear;
+        pointer-events: none;
+      }
+
+      .cyber-dots {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .cyber-dot {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .floating-numbers {
+        position: absolute;
+        color: var(--accent-color);
+        font-family: monospace;
+        opacity: 0.5;
+        animation: float-up 10s linear infinite;
+        pointer-events: none;
+      }
+
+      .tech-circle {
+        position: absolute;
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        animation: expand 3s ease-out infinite;
+        opacity: 0;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotateX(5deg) rotateY(5deg);
+        }
+        50% {
+          transform: translateY(-20px) rotateX(-5deg) rotateY(-5deg);
+        }
+      }
+
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%) rotate(45deg);
+        }
+        100% {
+          transform: translateX(100%) rotate(45deg);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.5;
+        }
+        50% {
+          transform: scale(1.5);
+          opacity: 1;
+        }
+      }
+
+      @keyframes float-up {
+        0% {
+          transform: translateY(100vh);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(-100vh);
+          opacity: 0;
+        }
+      }
+
+      @keyframes expand {
+        0% {
+          transform: scale(0);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(2);
+          opacity: 0;
+        }
+      }
+
+      @keyframes rippleEffect {
+        0% {
+          width: 0px;
+          height: 0px;
+          opacity: 0.5;
+        }
+        100% {
+          width: 500px;
+          height: 500px;
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="theme-switch">
+      <button class="switch-btn" onclick="toggleTheme()">切换主题</button>
+    </div>
+
+    <div class="container">
+      <div class="cyber-dots" id="cyberDots"></div>
+      <div class="orbital-system">
+        <div class="orbit"></div>
+        <div class="orbit"></div>
+        <div class="orbit"></div>
+      </div>
+      <div class="card">
+        <div class="content">
+          <h1>未来科技</h1>
+          <p>探索无限可能</p>
+          <p>突破创新边界</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const cursorEffect = document.createElement("div");
+        cursorEffect.className = "cursor-effect";
+        document.body.appendChild(cursorEffect);
+
+        const cursorGlow = document.createElement("div");
+        cursorGlow.className = "cursor-glow";
+        document.body.appendChild(cursorGlow);
+
+        const trails = [];
+        const maxTrails = 10;
+
+        function createCyberDots() {
+          const container = document.getElementById("cyberDots");
+          if (!container) return;
+
+          for (let i = 0; i < 50; i++) {
+            const dot = document.createElement("div");
+            dot.className = "cyber-dot";
+            dot.style.left = Math.random() * 100 + "%";
+            dot.style.top = Math.random() * 100 + "%";
+            dot.style.animationDelay = Math.random() * 2 + "s";
+            container.appendChild(dot);
+
+            const number = document.createElement("div");
+            number.className = "floating-numbers";
+            number.textContent = Math.floor(Math.random() * 2);
+            number.style.left = Math.random() * 100 + "%";
+            number.style.animationDelay = Math.random() * 5 + "s";
+            container.appendChild(number);
+          }
+        }
+
+        function createPlanets() {
+          const orbits = document.querySelectorAll(".orbit");
+          orbits.forEach((orbit, index) => {
+            const planet = document.createElement("div");
+            planet.className = "planet";
+            planet.style.width = 10 - index * 2 + "px";
+            planet.style.height = planet.style.width;
+            planet.style.left = "50%";
+            planet.style.top = "0";
+            orbit.appendChild(planet);
+          });
+        }
+
+        function createTechCircles() {
+          setInterval(() => {
+            const circle = document.createElement("div");
+            circle.className = "tech-circle";
+            circle.style.left = Math.random() * 100 + "%";
+            circle.style.top = Math.random() * 100 + "%";
+            circle.style.width = "50px";
+            circle.style.height = "50px";
+            document.querySelector(".container").appendChild(circle);
+
+            setTimeout(() => {
+              circle.remove();
+            }, 3000);
+          }, 1000);
+        }
+
+        document.addEventListener("mousemove", (e) => {
+          cursorEffect.style.left = e.clientX + "px";
+          cursorEffect.style.top = e.clientY + "px";
+
+          cursorGlow.style.left = e.clientX + "px";
+          cursorGlow.style.top = e.clientY + "px";
+
+          const trail = document.createElement("div");
+          trail.className = "cursor-trail";
+          trail.style.left = e.clientX + "px";
+          trail.style.top = e.clientY + "px";
+          document.body.appendChild(trail);
+          trails.push({
+            element: trail,
+            createdAt: Date.now(),
+          });
+
+          if (trails.length > maxTrails) {
+            const oldestTrail = trails.shift();
+            oldestTrail.element.remove();
+          }
+        });
+
+        setInterval(() => {
+          const now = Date.now();
+          while (trails.length > 0 && now - trails[0].createdAt > 100) {
+            const trail = trails.shift();
+            trail.element.remove();
+          }
+        }, 100);
+
+        document.addEventListener("mousedown", (e) => {
+          cursorEffect.style.width = "15px";
+          cursorEffect.style.height = "15px";
+
+          const ripple = document.createElement("div");
+          ripple.className = "ripple";
+          ripple.style.left = e.clientX + "px";
+          ripple.style.top = e.clientY + "px";
+          document.body.appendChild(ripple);
+
+          setTimeout(() => ripple.remove(), 1000);
+        });
+
+        document.addEventListener("mouseup", () => {
+          cursorEffect.style.width = "20px";
+          cursorEffect.style.height = "20px";
+        });
+
+        document.querySelectorAll("button, .card").forEach((element) => {
+          element.addEventListener("mouseenter", () => {
+            cursorEffect.style.width = "40px";
+            cursorEffect.style.height = "40px";
+            cursorEffect.style.borderColor = "var(--accent-color)";
+          });
+
+          element.addEventListener("mouseleave", () => {
+            cursorEffect.style.width = "20px";
+            cursorEffect.style.height = "20px";
+            cursorEffect.style.borderColor = "var(--primary-color)";
+          });
+        });
+
+        document.body.style.cursor = "none";
+
+        createCyberDots();
+        createPlanets();
+        createTechCircles();
+
+        let rafId = null;
+        function updateTrailPositions() {
+          trails.forEach((trail, index) => {
+            const opacity = 1 - index / maxTrails;
+            trail.element.style.opacity = opacity;
+          });
+          rafId = requestAnimationFrame(updateTrailPositions);
+        }
+        updateTrailPositions();
+
+        function cleanup() {
+          cancelAnimationFrame(rafId);
+          trails.forEach((trail) => trail.element.remove());
+          trails.length = 0;
+        }
+
+        window.addEventListener("beforeunload", cleanup);
+      });
+
+      function toggleTheme() {
+        const body = document.body;
+        if (body.getAttribute("data-theme") === "dark") {
+          body.removeAttribute("data-theme");
+        } else {
+          body.setAttribute("data-theme", "dark");
+        }
+      }
+    </script>
+  </body>
+</html>
